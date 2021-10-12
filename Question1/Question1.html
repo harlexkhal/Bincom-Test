@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Question 1</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="../Dependencies/Vendors/Vendor-Bootstrap3-Inuse/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <!-- Font Awesome -->    
+    <link rel="stylesheet" href="../Dependencies/Vendors/Vendor-Bootstrap3-Inuse/bower_components/font-awesome/css/font-awesome.min.css">
+    <!-- Ionicons -->            
+    <link rel="stylesheet" href="../Dependencies/Vendors/Vendor-Bootstrap3-Inuse/bower_components/Ionicons/css/ionicons.min.css">
+    <!-- DataTables -->         
+    <link rel="stylesheet" href="../Dependencies/Vendors/Vendor-Bootstrap3-Inuse/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+    <!-- Theme style -->   
+    <link rel="stylesheet" href="../Dependencies/Vendors/Vendor-Bootstrap3-Inuse/dist/css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="../Dependencies/Vendors/Vendor-Bootstrap3-Inuse/dist/css/skins/_all-skins.min.css">
+
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!-- Google Font -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+
+    <script>
+        //Server-Client Communication Script
+        let LastID = -1;
+
+        //Selected polling unit id call to server and responded by the server and load results
+        function LoadResults() {
+            var Obj, DbParam, XmlHttp;
+
+            Obj = {
+                "UniqueID": LastID
+            };
+            DbParam = JSON.stringify(Obj);
+            XmlHttp = new XMLHttpRequest();
+            document.getElementById("Info").innerHTML = "Loading Please be patient. you have a slow network";
+            XmlHttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("Info").innerHTML = "";
+                    document.getElementById("Results").innerHTML = "";
+                    S_Response = JSON.parse(this.responseText);
+                    if (S_Response.length <= 0)
+                        document.getElementById("Info").innerHTML = "No Result Available for this poll unit";
+
+                    for (var i = 0; i < S_Response.length; i++) {
+                        document.getElementById("Results").innerHTML += "<tr>" +
+                                                                           '<td>' + S_Response[i]['Party'] + '</td>' +
+                                                                           '<td>' + S_Response[i]['Score'] + '</td>' +
+                                                                         '</tr>'
+                    }
+                }
+            };
+
+            XmlHttp.open("POST", "LoadQuestion1Results.php", true);
+            XmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            XmlHttp.send("x=" + DbParam);
+        }
+
+        //list of polling unit fetched from server, ready for selection
+        function LoadPollingUnits() {
+            var Obj, DbParam, XmlHttp;
+
+            DbParam = JSON.stringify(Obj);
+            XmlHttp = new XMLHttpRequest();
+            XmlHttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("Polls").innerHTML = "";
+                    S_Response = JSON.parse(this.responseText);
+                    for (var i = 0; i < S_Response.length; i++) {
+                        document.getElementById("Polls").innerHTML += "<option value=" + S_Response[i]['UniqueID'] + ">" + S_Response[i]['Name'] + "</option>";
+                    }
+                }
+
+                setInterval(function () {
+                    if (LastID == document.getElementById("Polls").value)
+                        return;
+
+                    LastID = document.getElementById("Polls").value;
+                    LoadResults();
+                }, 500);
+            };
+
+            XmlHttp.open("POST", "LoadPollingUnits.php", true);
+            XmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            XmlHttp.send("x=" + DbParam);
+        }
+    </script>
+</head>
+
+<html>
+<body onload="LoadPollingUnits();">
+    <div class="row">
+        <!--logo-->
+        <div class="container-fluid col-lg-12 col-md-12 col-sm-12" style="background-color:cornflowerblue; height:50px; padding-bottom:75px;padding-left:75px;">
+            <h1 style="color:white; cursor:pointer;"><b>Bincom - Question 1</b></h1>
+
+            <i></i>
+        </div>
+        <!--/logo-->
+    </div>
+
+    <div class="box-header">
+        <div class="col-sm-4 form-group">
+            <h5>Select A Polling Unit Location Below</h5>
+            <select class="form-control Routes" id="Polls">
+                <h5 style="color:blue">Loading ... Your Network is Slow, Please be patient</h5>
+            </select>
+        </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Party</th>
+                    <th>Party Score</th>
+                </tr>
+            </thead>
+            <h5 id="Info" style="color:blue">Loading ... Your Network is Slow, Please be patient</h5>
+            <tbody id="Results">
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

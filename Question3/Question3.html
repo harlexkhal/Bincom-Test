@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Bincom | Test </title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+   
+    <!--Template Header Styles from Vendor-->
+    <link rel="stylesheet" href="../Dependencies/Vendors/Vendor-Bootstrap3-Inuse/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="../Dependencies/Vendors/Vendor-Bootstrap3-Inuse/bower_components/font-awesome/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="../Dpendencies/Vendors/Vendor-Bootstrap3-Inuse/bower_components/Ionicons/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="../Dependencies/Vendors/Vendor-Bootstrap3-Inuse/dist/css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="../Dependencies/Vendors/Vendor-Bootstrap3-Inuse/dist/css/skins/_all-skins.min.css">
+
+    <script>
+        //list of Parties fetched from server, ready for selection
+        function LoadLParties() {
+            var Obj, DbParam, XmlHttp;
+
+            DbParam = JSON.stringify(Obj);
+            XmlHttp = new XMLHttpRequest();
+            XmlHttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    S_Response = JSON.parse(this.responseText);
+                    for (var i = 0; i < S_Response.length; i++) {
+                        document.getElementById("Party").innerHTML += "<option value=" + S_Response[i]['UniqueID'] + ">" + S_Response[i]['Name'] + "</option>";
+                    }
+                }
+            };
+
+            XmlHttp.open("POST", "FetchParties.php", true);
+            XmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            XmlHttp.send("x=" + DbParam);
+        }
+    </script>
+</head>
+
+<html>
+<body onload="LoadLParties()">
+    <div class="row">
+        <!--logo-->
+        <div class="container-fluid col-lg-12 col-md-12 col-sm-12" style="background-color:cornflowerblue; height:50px; padding-bottom:75px;padding-left:75px;">
+            <h1 style="color:white; cursor:pointer;"><b><a href="AdminDB.html" style="text-decoration:none; color:white">Bincom - Question 3</a></b></h1>
+
+            <i></i>
+        </div>
+        <!--/logo-->
+    </div>
+
+    <div class="login-box">
+        <div class="login-logo">
+            Compute Results
+        </div>
+        <!-- /.login-logo -->
+        <div class="login-box-body">
+            <form method="post">
+                <div class="InfoLog" style="text-align:center;">
+                    ...
+                </div>
+                <div class="form-group has-feedback">
+                    <input type="text" class="form-control" placeholder="Unit Number" name="Info" required>
+                </div>
+
+                 <div class="form-group has-feedback">
+                    <input type="text" class="form-control" placeholder="Polling Name" name="Info" required>
+                </div>
+
+                 <div class="form-group has-feedback">
+                    <input type="text" class="form-control" placeholder="LGA" name="Info" required>
+                </div>
+                <!-- select -->
+ 
+                <div class="form-group has-feedback">
+                    <input type="text" class="form-control" placeholder="Ward Name" name="Info" required>
+                </div>
+
+                <div class="form-group has-feedback">
+                    <input type="number" class="form-control" placeholder="Results" name="Info" required>
+                </div>
+
+                <div class="form-group">   
+                    <select class="form-control Routes" id="Party">
+                       <option value = "">Select Party</option>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <!-- /.col -->
+                    <div class="col-xs-4 pull-right">
+                        <button type="submit" class="btn btn-success btn-block btn-flat">Save</button>
+                    </div>
+                    <!-- /.col -->
+                </div>
+            </form>
+
+        </div>
+        <!-- /.login-box-body -->
+    </div>
+</body>
+</html>
