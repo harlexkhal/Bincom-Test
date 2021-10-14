@@ -52,9 +52,9 @@
 
 		  for($w = 0; $w < sizeof($Party[$k]); $w++)
 		  {
-				if($AllParty[$k] == $Party[$k][$w])
+				if($AllParty[$w] == $Party[$k][$w])
 				{
-					$TrackCount[$k] += (int)$VoteCount[$k][$w];
+					$TrackCount[$w] += (int)$VoteCount[$k][$w];
 				}
 		  }
 	 }
